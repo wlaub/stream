@@ -1,0 +1,58 @@
+uniform float4x4 ViewProj;
+uniform texture2d image;
+
+sampler_state textureSampler {
+Filter = Linear;
+AddressU = Clamp;
+AddressV = Clamp;
+};
+
+struct VertData {
+float4 pos : POSITION;
+float2 uv : TEXCOORD0;
+};
+
+VertData VSDefault(VertData v_in)
+{
+VertData vert_out;
+vert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);
+vert_out.uv = v_in.uv;
+return vert_out;
+}
+
+float4 OffsetPixel(float4 rgba, VertData v_in)
+{
+float2 shiftedUV = v_in.uv;
+shiftedUV.x += 0.5f;
+return image.Sample( textureSampler, shiftedUV );
+}
+
+float4 PSColorKeyTRAppliedTLAndCroppedTL( VertData v_in )
+{
+float4 rgba = image.Sample( textureSampler, v_in.uv );
+if ( v_in.uv.x < 0.5f && v_in.uv.y < 0.5f )
+{
+float4 offsetRgba = OffsetPixel( rgba, v_in );
+if (offsetRgba.w > 0.01)
+	//rgba.w = (offsetRgba.w)*.05+.95;
+    rgba.w = 1;
+else
+	rgba.w = 0;
+}
+return rgba;
+}
+
+float4 PSColorKeyRGBA(VertData v_in) : TARGET
+{
+float4 rgba = PSColorKeyTRAppliedTLAndCroppedTL( v_in );
+return rgba;
+}
+
+technique Draw
+{
+pass
+{
+vertex_shader = VSDefault(v_in);
+pixel_shader = PSColorKeyRGBA(v_in);
+}
+}
