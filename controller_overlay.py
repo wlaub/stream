@@ -97,10 +97,13 @@ def bordered_rect(screen, left, top, width, height, linewidth, linecolor, fillco
 def draw_stick(screen, xpos, ypos, center, radius, pip_radius,linewidth, linecolor, fillcolor, wedgecolor, pipcolor, button=False):
     angle = math.atan2(ypos, xpos)
 
+    deadzone = 0.25
+    pip_radius = deadzone*radius
+
     rad = max(abs(xpos), abs(ypos))
-    if rad > 0.33:
+    if rad > 1:
         rad = 1
-    else:
+    elif rad < deadzone:
         rad = 0
 
     xpos = rad*math.cos(angle)
@@ -130,6 +133,10 @@ def draw_stick(screen, xpos, ypos, center, radius, pip_radius,linewidth, linecol
 
     #border
     pygame.draw.circle(screen, linecolor, center, radius, width = linewidth)
+
+    pygame.draw.circle(screen, linecolor, center, radius*deadzone, width = 1)
+
+
 
     #direction
     color = linecolor
