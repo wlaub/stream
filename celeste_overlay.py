@@ -64,14 +64,22 @@ class Handler():
         input_state = struct.unpack(input_state_fmt, raw[:size])
         raw = raw[size:]
 
-        if len(raw) > 0 and raw[0] == 1:
-            size = int(raw[1])
-            raw = raw[2:]
-            collection_flags = int(raw[0])
-            state_change_flags = int(raw[1])
-            raw = raw[size:]
-
-        strings = [x.decode('ascii') for x in raw.split(b'\x00')]
+        while len(raw) > 0:
+            if raw[0] == 1:
+                size = int(raw[1])
+                raw = raw[2:]
+                collection_flags = int(raw[0])
+                state_change_flags = int(raw[1])
+                raw = raw[size:]
+            elif raw[0] == 2:
+                size = struct.unpack('=H', raw[1:3])[0]
+                chunk, raw = raw[3:size], raw[size:]
+#                chunks = chunk.split(b'\x00')[:-1]
+#                for chunk in chunks:
+#                    fc = (chunk[1:].decode('ascii'), int(chunk[0]))
+            else:
+                break
+        strings = [x.decode('ascii') for x in raw.split(b'\x00')][:-1]
 
         lines = [
             str(deaths),

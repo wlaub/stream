@@ -179,14 +179,15 @@ while True:
 
         bordered_circle(screen, button_positions[btn], button_radius, border_width, outline_color, color)
 
+    trigger_offset = (button_radius*3+15, -button_radius*3-35)
 #### left bumper
     color = button_gray
     if joystick.get_button(button_map['lb']) > 0:
         color = button_white
 
     bordered_rect(screen,
-            button_offset[0]-button_radius-100,
-            button_offset[1]-button_radius*3-50,
+            button_offset[0]-trigger_offset[0],
+            button_offset[1]+trigger_offset[1],
             100,25, border_width,
             outline_color, color
             )
@@ -197,8 +198,8 @@ while True:
         color = button_white
 
     bordered_rect(screen,
-            button_offset[0]-button_radius-100,
-            button_offset[1]-button_radius*3-50+29,
+            button_offset[0]-trigger_offset[0],
+            button_offset[1]+trigger_offset[1]+29,
             40,50, border_width,
             outline_color, color
             )
@@ -209,8 +210,8 @@ while True:
         color = button_white
 
     bordered_rect(screen,
-            button_offset[0]+button_radius+50+10,
-            button_offset[1]-button_radius*3-50+29,
+            button_offset[0]+trigger_offset[0]-40,
+            button_offset[1]+trigger_offset[1]+29,
             40,50, border_width,
             outline_color, color
             )
@@ -221,8 +222,8 @@ while True:
         color = button_white
 
     bordered_rect(screen,
-            button_offset[0]+button_radius,
-            button_offset[1]-button_radius*3-50,
+            button_offset[0]+trigger_offset[0]-100,
+            button_offset[1]+trigger_offset[1],
             100,25, border_width,
             outline_color, color
             )
